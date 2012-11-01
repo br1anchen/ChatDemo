@@ -2,12 +2,31 @@
 <html>
 	<head>
 		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-		<script src="./node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js" type="text/javascript"></script>
+		<script src="/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js" type="text/javascript"></script>
 		<script src="chatDemoBrain.js" type="text/javascript"></script>
+		<style type="text/css">  
+      		#content { width: 600px; margin: 0 auto; }  
+      		textarea { width: 400px; height: 40px;}  
+    	</style> 
 		<script>
-
+			$(document).ready(function() {  
+         		initialize();  
+      		});
 		</script>
 	</head>
 	<body>
+		<div id="content">  
+	      	<h1>Chat Room</h1>
+	      	<h2>User Status</h2>  
+	      	<div id="status"></div>
+	      	<h2>Chat Log</h2>  
+	      	<div id="thread"></div>  
+	      	<div>  
+	        	<textarea id="text" name="text"></textarea>  
+	      	</div>  
+	      	<div>  
+	        	<button id="send" onclick="chat();">Send</button>  
+	      	</div>  
+    	</div>
 	</body>
 </html>
