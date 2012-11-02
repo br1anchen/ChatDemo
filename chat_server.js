@@ -21,28 +21,24 @@ app.configure(function(){
 var conns = {};
 
 io.sockets.on('connection', function (socket) {  
-        var cid = socket.id;  
-        for(var ccid in conns) {  
-            var soc = conns[ccid];  
-            soc.emit('join', {cid: socket.id});  
-        }  
-        conns[cid] = socket;  
-  
-        socket.on('disconnect', function () {  
-                delete conns[cid];  
-                for(var cid in conns) {  
-                    var soc = conns[cid];  
-                    soc.emit('quit', {cid: cid});  
-                }  
-            });  
+        var cid = socket.id;
+        conns[cid] = socket;
+        for(var userId in conns){   
+            conns[userId].emit('join', {cid: socket.id});
+        }
+        socket.on('disconnect', function () { 
+            for(var userId in conns){  
+                conns[userId].emit('quit', {cid: socket.id});
+            }
+            delete conns[socket.id];  
+        });  
   
         socket.on('chat', function (data) {  
-                data.cid = cid;  
-                for(var ccid in conns) {  
-                    var soc = conns[ccid];  
-                    soc.emit('broadcast', data);  
-                }  
-            });  
+            data.cid = socket.id;    
+            for(var userId in conns){  
+                conns[userId].emit('broadcast', data);
+            }    
+        });  
 });
 
 app.get('/', function (req, res) {  
