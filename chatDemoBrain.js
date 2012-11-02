@@ -8,14 +8,25 @@ socket.on('join', function (data) {
         status('Client ' + data.cid + ' joins!');  
     });  
   
-socket.on('broadcast', function (data) {  
-        $('#thread').append($('<div>').html('client ' + data.cid + ' says:<br/>' + data.w));  
+socket.on('broadcast', function (data) {
+		if(data.n == "Guest"){
+        	$('#thread').append($('<div>').html('Guest' + data.cid + ' says:<br/>' + data.w));
+    	}else
+    	{
+    		$('#thread').append($('<div>').html(data.n + ' says:<br/>' + data.w));
+    	}
     });  
   
 function chat() {  
-    var words = $('#text').val();  
-    if($.trim(words)) {  
-        socket.emit('chat', {w: words});  
+    var words = $('#text').val();
+    var name = $('#nickname').val();  
+    if($.trim(words)) {
+    	if($.trim(name)){  
+        	socket.emit('chat', {w: words,n:name});
+        }else
+        {
+        	socket.emit('chat',{w:words,n:"Guest"});
+        }
         $('#text').val('');  
     }  
 }  
