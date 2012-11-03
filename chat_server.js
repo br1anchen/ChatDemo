@@ -19,24 +19,44 @@ app.configure(function(){
 });
 
 var conns = {};
+var contactInfos = [];
 
 io.sockets.on('connection', function (socket) {  
         var cid = socket.id;
-        conns[cid] = socket;
+        
+        conns[cid] = {
+            connSocket:socket,
+            nickname:"Guest"+socket.id
+        };
+
+        contactInfos[contactInfos.length]={
+            cid:socket.id,
+            nickname:"Guest"+socket.id
+        };
+
+        console.log(conns);
+        console.log(contactInfos);
+
         for(var userId in conns){   
-            conns[userId].emit('join', {cid: socket.id});
+            conns[userId].connSocket.emit('join', {cid: socket.id,conns:contactInfos});
         }
-        socket.on('disconnect', function () { 
+        socket.on('disconnect', function () {
+            for(var i=0;i<contactInfos.length;i++)
+            {
+                if(contactInfos[i].cid == socket.id){contactInfos.splice(i,1);}
+            }
+
             for(var userId in conns){  
-                conns[userId].emit('quit', {cid: socket.id});
+                conns[userId].connSocket.emit('quit', {cid: socket.id,conns:contactInfos});
             }
             delete conns[socket.id];  
         });  
   
         socket.on('chat', function (data) {  
-            data.cid = socket.id;    
+            data.cid = socket.id;
+            conns[socket.id].nickname = data.n;    
             for(var userId in conns){  
-                conns[userId].emit('broadcast', data);
+                conns[userId].connSocket.emit('broadcast', {cid:socket.id,words:data.w,sender:data.n,conns:contactInfos});
             }    
         });  
 });
