@@ -54,11 +54,30 @@ io.sockets.on('connection', function (socket) {
   
         socket.on('chat', function (data) {  
             data.cid = socket.id;
-            conns[socket.id].nickname = data.n;    
+            conns[socket.id].nickname = data.n;
+
+            for(var i=0;i<contactInfos.length;i++)
+            {
+                if(contactInfos[i].cid==socket.id){contactInfos[i].nickname = data.n;}
+            }
+
             for(var userId in conns){  
                 conns[userId].connSocket.emit('broadcast', {cid:socket.id,words:data.w,sender:data.n,conns:contactInfos});
             }    
-        });  
+        });
+
+        socket.on('private', function (data) {  
+            console.log(data.recievers);   
+            for(var userId in conns){
+                for(var i = 0;i<data.recievers.length;i++)
+                {
+                    if(conns[userId].connSocket.id == data.recievers[i])
+                    {
+                        conns[userId].connSocket.emit('private', {cid:socket.id,words:data.w,sender:data.n,conns:contactInfos});
+                    }
+                }
+            }    
+        });
 });
 
 app.get('/', function (req, res) {  
