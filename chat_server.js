@@ -38,7 +38,7 @@ io.sockets.on('connection', function (socket) {
         console.log(contactInfos);
 
         for(var userId in conns){   
-            conns[userId].connSocket.emit('join', {cid: socket.id,conns:contactInfos});
+            conns[userId].connSocket.emit('join', {cid: socket.id,recieverName:conns[userId].nickname,conns:contactInfos});
         }
         socket.on('disconnect', function () {
             for(var i=0;i<contactInfos.length;i++)
@@ -67,13 +67,21 @@ io.sockets.on('connection', function (socket) {
         });
 
         socket.on('private', function (data) {  
-            console.log(data.recievers);   
+            //console.log(data.recievers);
+            conns[socket.id].nickname = data.n;
+
+            for(var i=0;i<contactInfos.length;i++)
+            {
+                if(contactInfos[i].cid==socket.id){contactInfos[i].nickname = data.n;}
+            }
+
             for(var userId in conns){
                 for(var i = 0;i<data.recievers.length;i++)
                 {
                     if(conns[userId].connSocket.id == data.recievers[i])
                     {
-                        conns[userId].connSocket.emit('private', {cid:socket.id,words:data.w,sender:data.n,conns:contactInfos});
+                        conns[userId].connSocket.emit('private', {cid:socket.id,words:data.w,sender:data.n,reciever:'You',conns:contactInfos});
+                        conns[socket.id].connSocket.emit('private', {cid:socket.id,words:data.w,sender:'You',reciever:conns[userId].nickname,conns:contactInfos});
                     }
                 }
             }    

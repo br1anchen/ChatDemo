@@ -2,14 +2,17 @@ var socket = io.connect("http://localhost:8080");
 var privateRecievers = [];  
   
 socket.on('quit', function (data) {  
-   status('Client ' + data.cid + ' quits!');
-   if(data.conns.length != 0){
+    status('Client ' + data.cid + ' quits!');
+    if(data.conns.length != 0){
       refreshContacts(data.conns);
    }  
 });  
   
 socket.on('join', function (data) {  
-   status('Client ' + data.cid + ' joins!');
+    status('Client ' + data.cid + ' joins!');
+    $('#defaultName').html('Welcome:'+ data.recieverName);
+    $('#yourName').hide();
+    $('#defaultName').show();
     if(data.conns.length != 0){
       refreshContacts(data.conns);
    }  
@@ -29,10 +32,10 @@ socket.on('broadcast', function (data) {
 
 socket.on('private', function (data) {
   if(data.sender == "Guest"){
-        $('#thread').append($('<div>').html('Guest' + data.cid + ' says in private:<br/>' + data.words));
+        $('#thread').append($('<div>').html('Guest' + data.cid + ' says in private to ' + data.reciever + ':<br/>' + data.words));
     }else
     {
-        $('#thread').append($('<div>').html(data.sender + ' says in private:<br/>' + data.words));
+        $('#thread').append($('<div>').html(data.sender + ' says in private to ' + data.reciever + ':<br/>' + data.words));
     }
     if(data.conns.length != 0){
       refreshContacts(data.conns);
@@ -42,9 +45,17 @@ socket.on('private', function (data) {
 function chat() {  
     var words = $('#text').val();
     var name = $('#nickname').val();
+    
     if($.trim(name) == "")
     {
       name = "Guest";
+      $('#yourName').hide();
+      $('#defaultName').show();
+    }else
+    {
+      $('#yourName').show();
+      $('#defaultName').hide();
+      $('#yourName').html('Welcome:'+ name);  
     }
 
     console.log(privateRecievers);
@@ -70,7 +81,7 @@ function refreshContacts(conns)
 	{
     var nickname = "" + conns[i].nickname;
     var cid = "" + conns[i].cid;
-		contactStr = contactStr + '<a href = "#" class="userInfo" onclick="chosenUser(\'' + cid + '\',\'' + nickname + '\');">' + nickname + '</a><br/>';
+		contactStr = contactStr + '<a href="javascript:void(0)" class="userInfo" onclick="chosenUser(\'' + cid + '\',\'' + nickname + '\');">' + nickname + '</a><br/>';
 	}
 
 	$('#contactList').html(contactStr);
