@@ -1,4 +1,4 @@
-var socket = io.connect("http://localhost:8080",{'sync disconnect on unload' : true});
+var socket = io.connect("http://limitless-peak-5260.herokuapp.com/",{'sync disconnect on unload' : true});
 var privateRecievers = [];  
   
 socket.on('quit', function (data) {  
