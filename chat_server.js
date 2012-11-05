@@ -2,13 +2,8 @@ var express = require('express');
 var app = express()
   , http = require('http')
   , server = http.createServer(app)
-  , io = require('socket.io').listen(server)
+  , socket = require('socket.io').listen(server)
   , fs = require('fs')
-
-var port = process.env.PORT || 8080;
-server.listen(port, function() {
-  console.log('Listening on ' + port);
-});
 
 app.configure(function(){
     app.use(express.bodyParser());
@@ -19,6 +14,17 @@ app.configure(function(){
     app.use(express.session({
         secret:"brianchencomoyodemo",
     }));
+});
+
+/*socket.io configuration for heroku*/
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
+
+var port = process.env.PORT || 8080;
+server.listen(port, function() {
+  console.log('Listening on ' + port);
 });
 
 var conns = {};
@@ -97,6 +103,6 @@ app.get('/', function (req, res) {
   
 app.use('/', express.static(__dirname + '/'));
 
-console.log('server start on http://localhost:8080'); 
+console.log('server start on http://localhost:' + port); 
 
 
