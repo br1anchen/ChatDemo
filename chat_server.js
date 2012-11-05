@@ -2,7 +2,7 @@ var express = require('express');
 var app = express()
   , http = require('http')
   , server = http.createServer(app)
-  , socket = require('socket.io').listen(server)
+  , io = require('socket.io').listen(server)
   , fs = require('fs')
 
 app.configure(function(){
@@ -18,8 +18,9 @@ app.configure(function(){
 
 /*socket.io configuration for heroku*/
 io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 2);
+  io.set("close timeout",3);
 });
 
 var port = process.env.PORT || 8080;
