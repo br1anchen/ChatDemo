@@ -2,7 +2,7 @@ var socket = io.connect("http://localhost:8080");
 var privateRecievers = [];  
   
 socket.on('quit', function (data) {  
-    status('Client ' + data.cid + ' quits!');
+    status(data.quiter + ' quits!');
     if(data.conns.length != 0){
       refreshContacts(data.conns);
    }  

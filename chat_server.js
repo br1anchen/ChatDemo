@@ -47,7 +47,7 @@ io.sockets.on('connection', function (socket) {
             }
 
             for(var userId in conns){  
-                conns[userId].connSocket.emit('quit', {cid: socket.id,conns:contactInfos});
+                conns[userId].connSocket.emit('quit', {cid: socket.id,quiter:conns[socket.id].nickname,conns:contactInfos});
             }
             delete conns[socket.id];  
         });  
