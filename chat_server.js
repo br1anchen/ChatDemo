@@ -5,7 +5,10 @@ var app = express()
   , io = require('socket.io').listen(server)
   , fs = require('fs')
 
-server.listen(8080);
+var port = process.env.PORT || 8080;
+server.listen(port, function() {
+  console.log('Listening on ' + port);
+});
 
 app.configure(function(){
     app.use(express.bodyParser());
