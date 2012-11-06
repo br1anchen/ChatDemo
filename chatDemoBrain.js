@@ -1,5 +1,6 @@
 var socket = io.connect("http://limitless-peak-5260.herokuapp.com/",{'sync disconnect on unload' : true});
-var privateRecievers = [];  
+var privateRecievers = [];
+var defaultId = ""; 
   
 socket.on('quit', function (data) {  
     status(data.quiter + ' quits!');
@@ -10,6 +11,7 @@ socket.on('quit', function (data) {
   
 socket.on('join', function (data) {  
     status('Client ' + data.cid + ' joins!');
+    defaultId = data.recieverId;
     $('#defaultName').html('Welcome:'+ data.recieverName);
     $('#yourName').hide();
     $('#defaultName').show();
@@ -19,24 +21,14 @@ socket.on('join', function (data) {
 });  
   
 socket.on('broadcast', function (data) {
-	if(data.sender == "Guest"){
-       	$('#thread').append($('<div>').html('Guest' + data.cid + ' says:<br/>' + data.words));
-   	}else
-   	{
-		    $('#thread').append($('<div>').html(data.sender + ' says:<br/>' + data.words));
-    }
+		$('#thread').append($('<div>').html(data.sender + ' says:<br/>' + data.words));
     if(data.conns.length != 0){
       refreshContacts(data.conns);
    }
 });
 
 socket.on('private', function (data) {
-  if(data.sender == "Guest"){
-        $('#thread').append($('<div>').html('Guest' + data.cid + ' says in private to ' + data.reciever + ':<br/>' + data.words));
-    }else
-    {
-        $('#thread').append($('<div>').html(data.sender + ' says in private to ' + data.reciever + ':<br/>' + data.words));
-    }
+    $('#thread').append($('<div>').html(data.sender + ' says in private to ' + data.reciever + ':<br/>' + data.words));
     if(data.conns.length != 0){
       refreshContacts(data.conns);
    }
@@ -48,7 +40,7 @@ function chat() {
     
     if($.trim(name) == "")
     {
-      name = "Guest";
+      name = "Guest" + defaultId;
       $('#yourName').hide();
       $('#defaultName').show();
     }else

@@ -48,7 +48,7 @@ io.sockets.on('connection', function (socket) {
         console.log(contactInfos);
 
         for(var userId in conns){   
-            conns[userId].connSocket.emit('join', {cid: socket.id,recieverName:conns[userId].nickname,conns:contactInfos});
+            conns[userId].connSocket.emit('join', {cid: socket.id,recieverId:conns[userId].connSocket.id,recieverName:conns[userId].nickname,conns:contactInfos});
         }
         socket.on('disconnect', function () {
             for(var i=0;i<contactInfos.length;i++)
